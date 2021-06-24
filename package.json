@@ -1,0 +1,21 @@
+{
+  "name": "discord-vote-bot",
+  "version": "1.0.0",
+  "description": "Discord vote bot",
+  "main": "main.js",
+  "scripts": {
+    "start": "nodemon main.js"
+  },
+  "author": "Andrey Rodionov",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^12.5.3",
+    "moment": "^2.29.1",
+    "node-url-shortener": "^2.0.0",
+    "sequelize": "^6.6.2",
+    "sqlite3": "^5.0.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
