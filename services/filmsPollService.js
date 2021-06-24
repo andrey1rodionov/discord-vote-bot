@@ -31,7 +31,7 @@ const createFilmsPoll = function (emoji, config, Discord, client, channel, nameO
             .setAuthor(config.appName)
             .setThumbnail('https://cdn.discordapp.com/attachments/857566261821833217/857588603781513236/rightP.png')
             .addFields([{
-                name: 'Дата окончания голосования',
+                name: 'Дата окончания голосования (МСК)',
                 value: endFilmsPollTime
             }, {
                 name: 'Фильмы:',
@@ -87,7 +87,7 @@ const createFilmsPoll = function (emoji, config, Discord, client, channel, nameO
                         .setAuthor(config.appName)
                         .setThumbnail('https://cdn.discordapp.com/attachments/857566261821833217/857588603781513236/rightP.png')
                         .addFields([{
-                            name: 'Дата окончания голосования',
+                            name: 'Дата окончания голосования (МСК)',
                             value: endFilmsPollTime
                         }, {
                             name: 'Фильмы:',
@@ -138,7 +138,7 @@ const createFilmsPoll = function (emoji, config, Discord, client, channel, nameO
                         .setAuthor(config.appName)
                         .setThumbnail('https://cdn.discordapp.com/attachments/857566261821833217/857588603781513236/rightP.png')
                         .addFields([{
-                            name: 'Дата окончания голосования',
+                            name: 'Дата окончания голосования (МСК)',
                             value: endFilmsPollTime
                         }, {
                             name: 'Фильмы:',

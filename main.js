@@ -1,10 +1,11 @@
 const Discord = require('discord.js')
 const client = new Discord.Client()
 const genresPollService = require('./services/genresPollService')
+const birthdayService = require('./services/birthdayService')
 const sequelize = require('./DB/database')
 const Sequelize = require('sequelize')
-const moment = require('moment')
-const shortUrl = require('node-url-shortener');
+const moment = require('moment-timezone')
+const shortUrl = require('node-url-shortener')
 
 const Genres = sequelize.Genres
 const FilmsGenres = sequelize.FilmsGenres
@@ -22,18 +23,17 @@ const config = {
     color: '#DC143C',
     appName: 'Harbingers Bot',
     pollTime: 20 * 1000,
-    mainChannel: '856202356135297044',
-    // adminChannel: '856202356135297044',
-    // pollChannel: '846868776259551287',
-    // guildID: '846868776259551282'
-    adminChannel: '857567697838407701',
-    pollChannel: '857566737233739796',
-    guildID: '598316717130907648'
+    mainChannel: '857628294665338900',
+    adminChannel: '856202356135297044',
+    pollChannel: '846868776259551287',
+    guildID: '846868776259551282'
+    // adminChannel: '857567697838407701',
+    // pollChannel: '857566737233739796',
+    // guildID: '598316717130907648'
 }
 
 client.on('ready', async () => {
     await client.user.setActivity('Фильмы', {type: 'WATCHING'})
-
     await createAppCommand({
         name: 'poll',
         description: 'Начать голосование',
@@ -108,6 +108,11 @@ client.on('ready', async () => {
             required: true
         }]
     }, config.guildID)
+
+    await createAppCommand({
+        name: 'happy-birthday',
+        description: 'Поздравить с днем рождения именинников',
+    }, config.guildID)
 })
 
 client.ws.on('INTERACTION_CREATE', async interaction => {
@@ -116,7 +121,7 @@ client.ws.on('INTERACTION_CREATE', async interaction => {
         if (command === 'poll') {
             try {
                 config.pollTime = interaction.data.options[0].value * 3600000
-                let endGenresPollTime = moment().add(config.pollTime, 'ms').format('LLL')
+                let endGenresPollTime = moment().tz('Europe/Moscow').add(config.pollTime, 'ms').format('LLL')
                 genresPollService.createGenresPoll(emoji, config, Discord, client, endGenresPollTime)
                 await sendReplyMessage(`Голосование началось! Закончится ${endGenresPollTime}`, interaction)
             } catch (e) {
@@ -186,8 +191,8 @@ client.ws.on('INTERACTION_CREATE', async interaction => {
                 const embed = await new Discord.MessageEmbed()
                     .setTitle('Список всех фильмов')
                     .setColor(config.color)
-                    .setFooter('testT')
                     .setAuthor(config.appName)
+                    .setThumbnail('https://cdn.discordapp.com/attachments/857566261821833217/857588603781513236/rightP.png')
                     .addFields([{
                         name: 'ID:',
                         value: filmID,
@@ -243,6 +248,13 @@ client.ws.on('INTERACTION_CREATE', async interaction => {
                 } else {
                     await sendReplyMessage('Неверная дата!', interaction)
                 }
+            } catch (e) {
+                await sendReplyMessage('Что-то пошло не так. Попробуйте еще раз!', interaction)
+            }
+        } else if (command === 'happy-birthday') {
+            try {
+                await birthdayService.birthdayService(config, Discord, client)
+                await sendReplyMessage('Поздравления отправлены!', interaction)
             } catch (e) {
                 await sendReplyMessage('Что-то пошло не так. Попробуйте еще раз!', interaction)
             }
@@ -311,4 +323,4 @@ const getAllFilms = async () => {
     return filmsInformation
 }
 
-client.login('ODU3MDI0MTA2MjgxNDM1MTc3.YNJj5Q.lyqnVAJWTt6FZ-oB-Tk3coftaZA')
+client.login('ODU3MDI0MTA2MjgxNDM1MTc3.YNJj5Q.RVrIHWYbmkispVR179psv4pIQdM')

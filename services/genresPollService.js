@@ -1,7 +1,7 @@
 const sequelize = require('../DB/database')
 const Sequelize = require('sequelize')
 const filmsPollService = require('../services/filmsPollService')
-const moment = require('moment')
+const moment = require('moment-timezone')
 
 const Genres = sequelize.Genres
 
@@ -26,7 +26,7 @@ const createGenresPoll = function (emoji, config, Discord, client, endGenresPoll
             .setAuthor(config.appName)
             .setThumbnail('https://cdn.discordapp.com/attachments/857566261821833217/857588603781513236/rightP.png')
             .addFields([{
-                name: 'Дата окончания голосования',
+                name: 'Дата окончания голосования (МСК)',
                 value: endGenresPollTime
             }, {
                 name: 'Жанры:',
@@ -78,7 +78,7 @@ const createGenresPoll = function (emoji, config, Discord, client, endGenresPoll
                         .setAuthor(config.appName)
                         .setThumbnail('https://cdn.discordapp.com/attachments/857566261821833217/857588603781513236/rightP.png')
                         .addFields([{
-                            name: 'Дата окончания голосования',
+                            name: 'Дата окончания голосования (МСК)',
                             value: endGenresPollTime
                         }, {
                             name: 'Жанры:',
@@ -125,7 +125,7 @@ const createGenresPoll = function (emoji, config, Discord, client, endGenresPoll
                         .setAuthor(config.appName)
                         .setThumbnail('https://cdn.discordapp.com/attachments/857566261821833217/857588603781513236/rightP.png')
                         .addFields([{
-                            name: 'Дата окончания голосования',
+                            name: 'Дата окончания голосования (МСК)',
                             value: endGenresPollTime
                         }, {
                             name: 'Жанры:',
@@ -164,7 +164,7 @@ const createGenresPoll = function (emoji, config, Discord, client, endGenresPoll
 
                     channel.send(embed)
 
-                    let endFilmsPollTime = moment(endGenresPollTime).add(config.pollTime, 'ms').format('LLL')
+                    let endFilmsPollTime = moment(endGenresPollTime).tz('Europe/Moscow').add(config.pollTime, 'ms').format('LLL')
 
                     filmsPollService.createFilmsPoll(emoji, config, Discord, client, channel, nameOfGenreWinner, endFilmsPollTime)
                 })
