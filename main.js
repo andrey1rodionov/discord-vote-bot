@@ -23,13 +23,13 @@ const config = {
     color: '#DC143C',
     appName: 'Harbingers Bot',
     pollTime: 20 * 1000,
-    mainChannel: '857628294665338900',
-    adminChannel: '856202356135297044',
-    pollChannel: '846868776259551287',
-    guildID: '846868776259551282'
-    // adminChannel: '857567697838407701',
-    // pollChannel: '857566737233739796',
-    // guildID: '598316717130907648'
+    mainChannel: '700832235091263538',
+    // adminChannel: '856202356135297044',
+    // pollChannel: '846868776259551287',
+    // guildID: '846868776259551282'
+    adminChannel: '857567697838407701',
+    pollChannel: '857566737233739796',
+    guildID: '598316717130907648'
 }
 
 client.on('ready', async () => {
