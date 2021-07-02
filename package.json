@@ -12,6 +12,7 @@
     "discord.js": "^12.5.3",
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.33",
+    "node-cron": "^3.0.0",
     "node-url-shortener": "^2.0.0",
     "sequelize": "^6.6.2",
     "sqlite3": "^5.0.2"

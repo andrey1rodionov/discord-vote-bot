@@ -53,16 +53,18 @@ const birthdaySendCongratulations = async function (config, Discord, client) {
 
     let arrayOfBirthdays = await getAllTodayBirthdays()
 
-    for (let i = 0; i < arrayOfBirthdays.length; i++) {
-        let element = arrayOfCongratulations[Math.floor(Math.random() * arrayOfCongratulations.length)];
-        channel.send(`<@${arrayOfBirthdays[i]}>`)
-        const embed = new Discord.MessageEmbed()
-            .setTitle('С Днем Рождения!')
-            .setColor(config.color)
-            .setDescription(element)
-            .setAuthor(config.appName)
-            .setThumbnail('https://cdn.discordapp.com/attachments/857566261821833217/857588603781513236/rightP.png')
-        channel.send(embed)
+    if (Array.isArray(arrayOfBirthdays) && arrayOfBirthdays.length) {
+        for (let i = 0; i < arrayOfBirthdays.length; i++) {
+            let element = arrayOfCongratulations[Math.floor(Math.random() * arrayOfCongratulations.length)];
+            channel.send(`<@${arrayOfBirthdays[i]}>`)
+            const embed = new Discord.MessageEmbed()
+                .setTitle('С Днем Рождения!')
+                .setColor(config.color)
+                .setDescription(element)
+                .setAuthor(config.appName)
+                .setThumbnail('https://cdn.discordapp.com/attachments/857566261821833217/857588603781513236/rightP.png')
+            channel.send(embed)
+        }
     }
 }
 

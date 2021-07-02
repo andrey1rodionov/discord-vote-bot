@@ -6,6 +6,7 @@ const sequelize = require('./DB/database')
 const Sequelize = require('sequelize')
 const moment = require('moment-timezone')
 const shortUrl = require('node-url-shortener')
+const cron = require('node-cron')
 
 const Genres = sequelize.Genres
 const FilmsGenres = sequelize.FilmsGenres
@@ -24,9 +25,6 @@ const config = {
     appName: 'Harbingers Bot',
     pollTime: 20 * 1000,
     mainChannel: '700832235091263538',
-    // adminChannel: '856202356135297044',
-    // pollChannel: '846868776259551287',
-    // guildID: '846868776259551282'
     adminChannel: '857567697838407701',
     pollChannel: '857566737233739796',
     guildID: '598316717130907648'
@@ -110,9 +108,24 @@ client.on('ready', async () => {
     }, config.guildID)
 
     await createAppCommand({
-        name: 'happy-birthday',
-        description: 'Поздравить с днем рождения именинников',
+        name: 'show-all-birthdays',
+        description: 'Вывести список всех дней рождений пользователей',
     }, config.guildID)
+
+    await createAppCommand({
+        name: 'delete-birthday',
+        description: 'Удалить день рождения пользователя',
+        options: [{
+            name: 'id',
+            description: 'ID дня рождения',
+            type: 4,
+            required: true
+        }]
+    }, config.guildID)
+
+    cron.schedule('0 9 * * *', async () => {
+        await birthdayService.birthdayService(config, Discord, client)
+    })
 })
 
 client.ws.on('INTERACTION_CREATE', async interaction => {
@@ -251,10 +264,57 @@ client.ws.on('INTERACTION_CREATE', async interaction => {
             } catch (e) {
                 await sendReplyMessage('Что-то пошло не так. Попробуйте еще раз!', interaction)
             }
-        } else if (command === 'happy-birthday') {
+        } else if (command === 'show-all-birthdays') {
             try {
-                await birthdayService.birthdayService(config, Discord, client)
-                await sendReplyMessage('Поздравления отправлены!', interaction)
+                let birthdayID = ''
+                let birthdayUsername = ''
+                let birthdayDate = ''
+
+                const result = await getAllBirthdays()
+
+                for (let i = 0; i < result.length; i++) {
+                    birthdayID += `${result[i].id}\n`
+                    birthdayUsername += `<@${result[i].userTag}>\n`
+                    birthdayDate += `${result[i].userBirthday}\n`
+                }
+
+                const embed = await new Discord.MessageEmbed()
+                    .setTitle('Список всех дней рождений')
+                    .setColor(config.color)
+                    .setAuthor(config.appName)
+                    .setThumbnail('https://cdn.discordapp.com/attachments/857566261821833217/857588603781513236/rightP.png')
+                    .addFields([{
+                        name: 'ID:',
+                        value: birthdayID,
+                        inline: true
+                    }, {
+                        name: 'Пользователь:',
+                        value: birthdayUsername,
+                        inline: true
+                    }, {
+                        name: 'Дата дня рождения:',
+                        value: birthdayDate,
+                        inline: true
+                    }])
+
+                client.api.interactions(interaction.id, interaction.token).callback.post({
+                    data: {
+                        type: 4,
+                        data: await createAPIMessage(interaction, embed)
+                    },
+                })
+            } catch (e) {
+                await sendReplyMessage('Что-то пошло не так. Попробуйте еще раз!', interaction)
+            }
+        } else if (command === 'delete-birthday') {
+            try {
+                const birthdayID = interaction.data.options[0].value
+
+                await Birthday.destroy({
+                    where: {id: birthdayID}
+                })
+
+                await sendReplyMessage('День рождения пользователя удален успешно!', interaction)
             } catch (e) {
                 await sendReplyMessage('Что-то пошло не так. Попробуйте еще раз!', interaction)
             }
@@ -323,4 +383,20 @@ const getAllFilms = async () => {
     return filmsInformation
 }
 
-client.login('ODU3MDI0MTA2MjgxNDM1MTc3.YNJj5Q.RVrIHWYbmkispVR179psv4pIQdM')
+const getAllBirthdays = async () => {
+    const birthdaysInformation = []
+
+    const birthdays = await Birthday.findAll({})
+
+    for (const birthdayObj of birthdays) {
+        birthdaysInformation.push({
+            id: birthdayObj['id'],
+            userTag: birthdayObj['UserTag'],
+            userBirthday: moment(birthdayObj['UserBirthday'], 'YYYY-MM-DD').format('DD.MM.YYYY')
+        })
+    }
+
+    return birthdaysInformation
+}
+
+client.login(process.env.TOKEN)
